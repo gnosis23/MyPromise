@@ -15,5 +15,16 @@ describe('MyPromise', function() {
     })
   });
 
-  
+  it('promise return promise', function(done) {
+    new MyPromise((resolve, reject) => {
+      resolve(1)
+    }).then(x => {
+      return new MyPromise((resolveInner, rejectInner) => {
+        resolveInner(x + 1);
+      })
+    }).then(x => {
+      assert.equal(x, 2);
+      done();
+    });
+  })
 });

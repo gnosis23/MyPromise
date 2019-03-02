@@ -27,7 +27,7 @@ function MyPromise(fn) {
           cb => cb.call(null, that.value)
         )
       }
-    });
+    })
   }
 
   function reject(value) {
@@ -39,7 +39,7 @@ function MyPromise(fn) {
           cb => cb(that.value)
         )
       }
-    });
+    })
   }
 
   try {
@@ -51,12 +51,14 @@ function MyPromise(fn) {
 
 function resolutionProcedure(promise2, x, resolve, reject) {
   if (promise2 === x) {
-    return reject(new TypeError('error'))
+    reject(new TypeError('error'))
+    return
   }
-  if (x instanceof MyPromise) {
+  else if (x instanceof MyPromise) {
     x.then(function (value) {
       resolutionProcedure(promise2, value, resolve, reject)
     }, reject)
+    return
   }
 
   let called = false
@@ -91,6 +93,8 @@ function resolutionProcedure(promise2, x, resolve, reject) {
 
 MyPromise.prototype.then = function (onFulfilled, onRejected) {
   const that = this
+  var promise2
+
   onFulfilled = typeof onFulfilled === 'function'
     ? onFulfilled
     : v => v
@@ -128,7 +132,7 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
         } catch (r) {
           reject(r)
         }
-      });
+      })
     }))
   }
   if (that.state === REJECTED) {
@@ -140,7 +144,7 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
         } catch (r) {
           reject(r)
         }
-      });
+      })
     }))
   }
 }
