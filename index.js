@@ -149,4 +149,8 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
   }
 }
 
+MyPromise.prototype.catch = function(onRejected) {
+  return this.then(undefined, onRejected)
+}
+
 module.exports = MyPromise

@@ -84,4 +84,20 @@ describe('MyPromise', function() {
       done();
     });
   })
+
+  it('catch error', function(done) {
+    new MyPromise(function(resolve, reject) {
+      resolve('Success');
+    }).then(function() {
+      throw new Error('oh, no!');
+    }).catch(function(e) {
+      assert.ok(e instanceof Error);
+      return 'good';
+    }).then(function(x){
+      assert.equal(x, 'good');
+      done();
+    }, function () {
+      assert.fail();
+    });
+  })
 });
