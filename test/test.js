@@ -44,6 +44,21 @@ describe('MyPromise', function() {
     });
   })
 
+  it('should resolve in next then', function(done) {
+    new MyPromise((resolve, reject) => {
+      reject(1);
+    }).then(() => {
+      assert.fail();
+    }, (e) => {
+      return e;
+    }).then((x) => {
+      assert.equal(x, 1);
+      done();
+    }, (e) => {
+      assert.fail();
+    });
+  })
+
   it('normal promise chain', function(done) {
     var p = new MyPromise((resolve, reject) => {
       resolve(1);
