@@ -36,7 +36,7 @@ function MyPromise(fn) {
         that.state = REJECTED
         that.value = value
         that.rejectedCb.forEach(
-          cb => cb(that.value)
+          cb => cb.call(null, that.value)
         )
       }
     })
@@ -98,7 +98,7 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
   onFulfilled = typeof onFulfilled === 'function'
     ? onFulfilled
     : v => v
-  onRejected = typeof onRejected
+  onRejected = typeof onRejected === 'function'
     ? onRejected
     : r => { throw r }
 
