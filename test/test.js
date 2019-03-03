@@ -100,4 +100,48 @@ describe('MyPromise', function() {
       assert.fail();
     });
   })
+
+  it('should MyPromise.all return array', function(done) {
+    var p1 = 3;
+    var p2 = 1337;
+    var p3 = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("foo");
+      }, 100);
+    }); 
+
+    MyPromise.all([p1, p2, p3]).then(values => {
+      assert.deepEqual(values, [3, 1337, "foo"]);
+      done(); 
+    });
+  })
+
+  it('should MyPromise.all fail-fast', function(done) {
+    var p1 = new MyPromise((resolve, reject) => { 
+      setTimeout(() => resolve('one'), 10); 
+    }); 
+    var p2 = new MyPromise((resolve, reject) => { 
+      setTimeout(() => resolve('two'), 20); 
+    });
+    var p3 = new MyPromise((resolve, reject) => {
+      setTimeout(() => resolve('three'), 30);
+    });
+    var p4 = new MyPromise((resolve, reject) => {
+      setTimeout(() => resolve('four'), 40);
+    });
+    var p5 = new MyPromise((resolve, reject) => {
+      reject(new Error('reject'));
+    });
+    
+    
+    // Using .catch:
+    MyPromise.all([p1, p2, p3, p4, p5])
+    .then(values => { 
+      assert.fail();
+    })
+    .catch(error => {
+      assert.equal(error.message, 'reject')
+      done();
+    });
+  })
 });

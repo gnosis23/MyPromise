@@ -153,4 +153,32 @@ MyPromise.prototype.catch = function(onRejected) {
   return this.then(undefined, onRejected)
 }
 
+MyPromise.all = function(promises) {
+  if (!(promises instanceof Array)) throw new Error('bad array')
+  if (promises.length === 0) {
+    return new MyPromise((resolve) => { resolve() })
+  }
+
+  return new MyPromise((resolve, reject) => {
+    var count = 0
+    var result = []
+    promises.forEach((p, id) => {
+      if (p instanceof MyPromise) {
+        p.then(x => {
+          count += 1
+          result[id] = x
+          if (count === promises.length) {
+            resolve(result)
+          }
+        }, e => {
+          reject(e)
+        })
+      } else {
+        count += 1
+        result[id] = p
+      }
+    })
+  })
+}
+
 module.exports = MyPromise
