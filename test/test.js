@@ -144,4 +144,29 @@ describe('MyPromise', function() {
       done();
     });
   })
+
+  it('should run before setTimeout', function (done) {
+    var result = []
+    
+    new MyPromise(function(resolve) {
+      resolve()
+    }).then(x => { 
+      result.push(0);
+    });
+    
+    setTimeout(() => {
+      result.push(1)
+    }, 0);
+
+    new MyPromise(function(resolve) {
+      resolve()
+    }).then(x => { 
+      result.push(2);
+    });
+
+    setTimeout(() => {
+      assert.deepEqual(result, [0, 2, 1])
+      done()
+    }, 100);
+  }) 
 });

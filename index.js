@@ -1,9 +1,10 @@
+var nextTick = require('./platform').nextTick;
 var PENDING = 'pending'
 var RESOLVED = 'resolved'
 var REJECTED = 'rejected'
 
-function nextMacroTask(fn) {
-  setTimeout(fn, 0)
+function nextTask(fn) {
+  nextTick(fn)
 }
 
 function MyPromise(fn) {
@@ -17,7 +18,7 @@ function MyPromise(fn) {
     if (value instanceof MyPromise) {
       return value.then(resolve, reject)
     }
-    nextMacroTask(function() {
+    nextTask(function() {
       if (that.state === PENDING) {
         that.state = RESOLVED
         that.value = value
@@ -29,7 +30,7 @@ function MyPromise(fn) {
   }
 
   function reject(value) {
-    nextMacroTask(function() {
+    nextTask(function() {
       if (that.state === PENDING) {
         that.state = REJECTED
         that.value = value
@@ -123,7 +124,7 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
   }
   if (that.state === RESOLVED) {
     return (promise2 = new MyPromise(function(resolve, reject) {
-      nextMacroTask(function() {
+      nextTask(function() {
         try {
           var x = onFulfilled(that.value)
           resolutionProcedure(promise2, x, resolve, reject)
@@ -135,7 +136,7 @@ MyPromise.prototype.then = function (onFulfilled, onRejected) {
   }
   if (that.state === REJECTED) {
     return (promise2 = new MyPromise(function(resolve, reject) {
-      nextMacroTask(function() {
+      nextTask(function() {
         try {
           var x = onRejected(that.value)
           resolutionProcedure(promise2, x, resolve, reject)
